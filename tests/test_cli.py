@@ -42,3 +42,12 @@ def test_cli_top_command_with_filter():
     runner = CliRunner()
     result = runner.invoke(cli, ["top", "--filter", "python", "--top", "3"])
     assert result.exit_code in [0, 1]
+
+
+def test_cli_health_command():
+    """Test health command."""
+    runner = CliRunner()
+    result = runner.invoke(cli, ["health"])
+    assert result.exit_code == 0
+    assert "Health" in result.output or "health" in result.output.lower()
+    assert "Score" in result.output or "score" in result.output.lower()

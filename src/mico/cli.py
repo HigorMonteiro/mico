@@ -6,6 +6,7 @@ import click
 from mico.adapters.system import SystemAdapter
 from mico.domain.use_cases.list_processes import ListProcessesUseCase
 from mico.domain.use_cases.filter_processes import FilterProcessesUseCase
+from mico.domain.use_cases.calculate_health import CalculateSystemHealthUseCase
 
 
 @click.group()
@@ -99,6 +100,48 @@ def top(top: int, sort: str, filter: str):
         click.echo(
             f"{process.pid:<8} {name:<30} {memory_mb:>12.2f} MB {memory_percent:>10.2f}%  {username}"
         )
+    
+        click.echo()
+
+
+@cli.command()
+def health():
+    """
+    Check overall system health.
+    
+    Displays health scores for CPU, memory, and disk usage,
+    along with warnings and recommendations.
+    
+    Example:
+    
+      mico health
+    """
+    adapter = SystemAdapter()
+    system_metrics = adapter.get_system_metrics()
+    
+    health_result = CalculateSystemHealthUseCase.execute(system_metrics)
+    
+    click.echo(f"\n{health_result['emoji']} Overall Health: {health_result['overall_score']:.0f}/100")
+    click.echo(f"Status: {health_result['status'].upper()}\n")
+    
+    click.echo("📊 Component Scores:")
+    for component, score in health_result['scores'].items():
+        if score >= 80:
+            color = "green"
+        elif score >= 60:
+            color = "yellow"
+        else:
+            color = "red"
+        
+        click.echo(f"  • {component.upper()}: ", nl=False)
+        click.echo(click.style(f"{score:.0f}/100", fg=color))
+    
+    if health_result['warnings']:
+        click.echo("\n⚠️  Warnings:")
+        for warning in health_result['warnings']:
+            click.echo(click.style(f"  • {warning}", fg="yellow"))
+    else:
+        click.echo(click.style("\n✅ No warnings - system is healthy!", fg="green"))
     
     click.echo()
 

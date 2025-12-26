@@ -2,7 +2,7 @@
 
 import pytest
 from mico.adapters.system import SystemAdapter
-from mico.domain.entities import SystemInfo, MemoryInfo, Process
+from mico.domain.entities import SystemInfo, MemoryInfo, Process, SystemMetrics
 
 
 def test_system_adapter_get_system_info():
@@ -31,4 +31,20 @@ def test_system_adapter_get_all_processes():
         assert process.name
         assert isinstance(process.memory, MemoryInfo)
         assert process.memory.rss_bytes is not None
+
+
+def test_system_adapter_get_system_metrics():
+    """Test SystemAdapter.get_system_metrics returns SystemMetrics."""
+    adapter = SystemAdapter()
+    metrics = adapter.get_system_metrics()
+    
+    assert isinstance(metrics, SystemMetrics)
+    assert metrics.cpu_percent >= 0
+    assert metrics.cpu_percent <= 100
+    assert metrics.memory_percent >= 0
+    assert metrics.memory_percent <= 100
+    assert metrics.disk_percent >= 0
+    assert metrics.disk_percent <= 100
+    assert metrics.memory_total_gb > 0
+    assert metrics.disk_total_gb > 0
 

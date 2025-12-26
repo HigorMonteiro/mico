@@ -2,7 +2,7 @@
 
 import psutil
 from typing import Protocol, List
-from mico.domain.entities import MemoryInfo, SystemInfo, Process
+from mico.domain.entities import MemoryInfo, SystemInfo, Process, SystemMetrics
 
 
 class ISystemAdapter(Protocol):
@@ -14,6 +14,10 @@ class ISystemAdapter(Protocol):
     
     def get_all_processes(self) -> List[Process]:
         """Returns all system processes."""
+        ...
+    
+    def get_system_metrics(self) -> SystemMetrics:
+        """Returns extended system metrics for health checking."""
         ...
 
 
@@ -85,4 +89,33 @@ class SystemAdapter:
                 continue
         
         return processes
+    
+    def get_system_metrics(self) -> SystemMetrics:
+        """
+        Collects extended system metrics for health checking.
+        
+        Returns:
+            SystemMetrics with CPU, memory, and disk information
+        """
+        cpu_percent = psutil.cpu_percent(interval=1)
+        
+        mem = psutil.virtual_memory()
+        memory_total_gb = mem.total / (1024 ** 3)
+        memory_used_gb = mem.used / (1024 ** 3)
+        memory_percent = mem.percent
+        
+        disk = psutil.disk_usage('/')
+        disk_total_gb = disk.total / (1024 ** 3)
+        disk_used_gb = disk.used / (1024 ** 3)
+        disk_percent = disk.percent
+        
+        return SystemMetrics(
+            cpu_percent=cpu_percent,
+            memory_percent=memory_percent,
+            disk_percent=disk_percent,
+            memory_total_gb=memory_total_gb,
+            memory_used_gb=memory_used_gb,
+            disk_total_gb=disk_total_gb,
+            disk_used_gb=disk_used_gb
+        )
 

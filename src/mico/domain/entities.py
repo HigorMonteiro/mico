@@ -129,3 +129,41 @@ class SystemInfo:
     
     memory: MemoryInfo
 
+
+@dataclass(frozen=True)
+class SystemMetrics:
+    """
+    Value Object - Extended system metrics for health checking.
+    
+    Attributes:
+        cpu_percent: CPU usage percentage
+        memory_percent: Memory usage percentage
+        disk_percent: Disk usage percentage
+        memory_total_gb: Total memory in GB
+        memory_used_gb: Used memory in GB
+        disk_total_gb: Total disk space in GB
+        disk_used_gb: Used disk space in GB
+    """
+    
+    cpu_percent: float
+    memory_percent: float
+    disk_percent: float
+    memory_total_gb: float
+    memory_used_gb: float
+    disk_total_gb: float
+    disk_used_gb: float
+    
+    @property
+    def is_healthy(self) -> bool:
+        """
+        Determines if system is healthy based on thresholds.
+        
+        Returns:
+            True if system is healthy, False otherwise
+        """
+        return (
+            self.cpu_percent < 80 and
+            self.memory_percent < 85 and
+            self.disk_percent < 90
+        )
+
