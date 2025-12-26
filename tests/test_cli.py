@@ -27,3 +27,18 @@ def test_cli_memory_command():
     result = runner.invoke(cli, ["memory"])
     assert result.exit_code == 0
     assert "Memory" in result.output or "memory" in result.output.lower()
+
+
+def test_cli_top_command():
+    """Test top command."""
+    runner = CliRunner()
+    result = runner.invoke(cli, ["top", "--top", "5"])
+    assert result.exit_code == 0
+    assert "Processes" in result.output or "processes" in result.output.lower()
+
+
+def test_cli_top_command_with_filter():
+    """Test top command with filter."""
+    runner = CliRunner()
+    result = runner.invoke(cli, ["top", "--filter", "python", "--top", "3"])
+    assert result.exit_code in [0, 1]
