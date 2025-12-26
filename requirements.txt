@@ -1,0 +1,6 @@
+# Production dependencies
+# Add your runtime dependencies here
+
+# Development dependencies (install with: pip install -e ".[dev]")
+# See pyproject.toml for dev dependencies
+
