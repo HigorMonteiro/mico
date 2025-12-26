@@ -1,29 +1,29 @@
 """Tests for CLI module."""
 
 import pytest
-from mico.cli import main
+from click.testing import CliRunner
+from mico.cli import cli
 
 
-def test_main_version():
+def test_cli_version():
     """Test version command."""
-    result = main(["--version"])
-    assert result == 0
+    runner = CliRunner()
+    result = runner.invoke(cli, ["--version"])
+    assert result.exit_code == 0
+    assert "mico" in result.output.lower()
 
 
-def test_main_help():
+def test_cli_help():
     """Test help command."""
-    result = main(["--help"])
-    assert result == 0
+    runner = CliRunner()
+    result = runner.invoke(cli, ["--help"])
+    assert result.exit_code == 0
+    assert "mico" in result.output.lower()
 
 
-def test_main_no_args():
-    """Test main with no arguments."""
-    result = main([])
-    assert result == 0
-
-
-def test_main_unknown_command():
-    """Test main with unknown command."""
-    result = main(["unknown"])
-    assert result == 1
-
+def test_cli_memory_command():
+    """Test memory command."""
+    runner = CliRunner()
+    result = runner.invoke(cli, ["memory"])
+    assert result.exit_code == 0
+    assert "Memory" in result.output or "memory" in result.output.lower()

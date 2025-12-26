@@ -13,6 +13,10 @@ authors = [
     {name = "Mico Contributors"}
 ]
 keywords = ["cli", "monitoring", "macos", "system", "metrics"]
+dependencies = [
+    "psutil>=5.9.0",
+    "click>=8.0.0",
+]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -48,7 +52,7 @@ where = ["src"]
 "*" = ["py.typed"]
 
 [project.scripts]
-mico = "mico.cli:main"
+mico = "mico.cli:cli"
 
 [tool.black]
 line-length = 100
